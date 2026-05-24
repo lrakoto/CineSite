@@ -1,6 +1,23 @@
 import React, { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
 
+function ProjectImage({ src, alt = "" }) {
+  const [loaded, setLoaded] = useState(false)
+  return (
+    <div className="absolute inset-0">
+      {!loaded && (
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent animate-pulse" />
+      )}
+      <img
+        src={src}
+        alt={alt}
+        onLoad={() => setLoaded(true)}
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
+      />
+    </div>
+  )
+}
+
 export default function CinematicPortfolio() {
   const containerRef = useRef(null);
   const horizontalRef = useRef(null);
@@ -45,7 +62,7 @@ export default function CinematicPortfolio() {
   );
 
   const projects = [
-    { n: "01", title: "Maison Verre", tag: "Luxury · 2025", color: "#c9a878", scene: "rings" },
+    { n: "01", title: "Maison Verre", tag: "Luxury · 2025", color: "#c9a878", scene: "rings", image: "/assets/images/maison-verre.jpg" },
     { n: "02", title: "Polaris Studio", tag: "Identity · 2025", color: "#7a9fc7", scene: "grid" },
     { n: "03", title: "Echo Atelier", tag: "Editorial · 2024", color: "#b87474", scene: "waves" },
     { n: "04", title: "Nocturne", tag: "Music · 2024", color: "#8a7ab0", scene: "orb" },
@@ -118,7 +135,6 @@ export default function CinematicPortfolio() {
     <div ref={containerRef} className="relative bg-[#0a0a0a] text-[#e8e4dc] overflow-x-hidden"
       style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&display=swap');
         * { -webkit-font-smoothing: antialiased; }
         .mono { font-family: 'JetBrains Mono', monospace; font-weight: 300; letter-spacing: 0.02em; }
         .display { font-family: 'Fraunces', serif; font-weight: 300; letter-spacing: -0.04em; }
@@ -154,15 +170,19 @@ export default function CinematicPortfolio() {
       </div>
 
       <section className="h-screen sticky top-0 flex items-center justify-center overflow-hidden">
-        <motion.div className="absolute inset-0"
-          style={{
-            scale: heroScale, filter: heroFilter,
+        <motion.div className="absolute inset-0" style={{ scale: heroScale, filter: heroFilter }}>
+          <video autoPlay muted loop playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-30">
+            <source src="/assets/videos/hero-loop.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0" style={{
             background: `
               radial-gradient(ellipse 80% 60% at 30% 40%, rgba(201,168,120,0.18), transparent),
               radial-gradient(ellipse 60% 80% at 70% 60%, rgba(122,159,199,0.12), transparent),
               radial-gradient(ellipse 100% 100% at 50% 100%, rgba(184,116,116,0.1), transparent),
               #0a0a0a`,
           }} />
+        </motion.div>
         <div className="absolute inset-0 flex justify-between px-6 md:px-10 pointer-events-none">
           {Array.from({ length: 13 }).map((_, i) => <div key={i} className="w-px h-full bg-white/[0.025]" />)}
         </div>
@@ -234,6 +254,7 @@ export default function CinematicPortfolio() {
                       linear-gradient(135deg, #1a1a1a, #0f0f0f)`,
                   }} />
                 <Scene type={p.scene} color={p.color} />
+                {p.image && <ProjectImage src={p.image} alt={p.title} />}
 
                 <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-between z-10">
                   <div className="flex justify-between mono text-[10px] uppercase tracking-[0.2em]">
